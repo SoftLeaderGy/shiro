@@ -1,11 +1,14 @@
 package com.yang.shirospringboot.config;
 
+import com.yang.shirospringboot.entity.User;
+import com.yang.shirospringboot.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Description:
@@ -14,6 +17,8 @@ import org.apache.shiro.subject.PrincipalCollection;
  */
 public class UserRealm extends AuthorizingRealm {
 
+    @Autowired
+    UserService userService;
     // 授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -33,18 +38,17 @@ public class UserRealm extends AuthorizingRealm {
 
         // 查数据库 拿用户名密码
 
-        String name = "root";
-        String pass = "123456";
-
+//        String name = "root";
+//        String pass = "123456";
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
-
+        User user = userService.getUserByUserName(token.getUsername());
         // 验证用户名密码
-        if (!token.getUsername().equals(name)) {
+        if (user == null || !token.getUsername().equals(user.getUsername())) {
             return null; // 返回null 就是抛出异常 UnknownAccountException
         }
 
         // 密码 shiro做了，安全、高效
         // 获取当前的认证，密码，认证名
-        return new SimpleAuthenticationInfo("", pass, "");
+        return new SimpleAuthenticationInfo("", user.getPassword(), "");
     }
 }
