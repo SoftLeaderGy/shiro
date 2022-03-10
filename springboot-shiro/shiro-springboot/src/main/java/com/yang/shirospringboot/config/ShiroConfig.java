@@ -45,7 +45,9 @@ public class ShiroConfig {
 //        filterMap.put("/user/add","authc");
 //        filterMap.put("/user/update","authc");
         // 支持通配符
-        filterMap.put("/user/add","perms[user:add]");
+        filterMap.put("/user/add","perms[user:add]");  // 拦截需要授权的用户请求
+
+        // 拦截需要认证的请求
         filterMap.put("/user/*","authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
